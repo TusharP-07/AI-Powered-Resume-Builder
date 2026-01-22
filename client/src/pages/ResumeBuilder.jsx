@@ -13,6 +13,8 @@ import {
 } from "lucide-react";
 import { dummyResumeData } from "../assets/assets";
 import PersonalInfoForm from "../components/PersonalInfoForm";
+import ResumePreview from "../components/ResumePreview";
+import TemplateSelector from "../components/TemplateSelector";
 
 const ResumeBuilder = () => {
   const { resumeId } = useParams();
@@ -81,7 +83,7 @@ const ResumeBuilder = () => {
 
               {/* Progress bar fill ✅ FIXED */}
               <div
-                className="absolute top-0 left-0 h-1 bg-linear-to-r from-green-500 to-green-600 border-none transition-all duration-700"
+                className="absolute top-0 left-0 h-1 bg-linear-to-r from-green-500 to-green-600 transition-all duration-700"
                 style={{
                   width: `${
                     (activeSectionIndex / (sections.length - 1)) * 100
@@ -90,8 +92,8 @@ const ResumeBuilder = () => {
               />
 
               {/* ✅ Header row */}
-              <div className="flex justify-between items-start mb-6 pb-4 border-b border-gray-200">
-                {/* ✅ Left title + subtitle */}
+              <div className="flex justify-between items-start mb-4 pb-4 border-b border-gray-200">
+                {/* Left title + subtitle */}
                 <div>
                   <h2 className="text-lg font-semibold text-slate-800">
                     {activeSection.title === "Personal Info"
@@ -104,7 +106,7 @@ const ResumeBuilder = () => {
                   </p>
                 </div>
 
-                {/* ✅ Right buttons */}
+                {/* Right buttons */}
                 <div className="flex items-center gap-2">
                   {activeSectionIndex !== 0 && (
                     <button
@@ -137,7 +139,17 @@ const ResumeBuilder = () => {
                 </div>
               </div>
 
-              {/* ✅ Form Content OUTSIDE flex row */}
+              {/* ✅ Template Selector BELOW header */}
+              <div className="mb-6">
+                <TemplateSelector
+                  selectedTemplate={resumeData.template}
+                  onChange={(template) =>
+                    setResumeData((prev) => ({ ...prev, template }))
+                  }
+                />
+              </div>
+
+              {/* ✅ Form Content */}
               <div className="space-y-6">
                 {activeSection.id === "personal" && (
                   <PersonalInfoForm
@@ -157,7 +169,15 @@ const ResumeBuilder = () => {
           </div>
 
           {/* Right Panel - Resume Preview */}
-          <div className="lg:col-span-7 rounded-lg border border-gray-200 bg-white shadow-sm p-6"></div>
+          <div className="lg:col-span-7 max-lg:mt-6">
+            <div className="bg-white border border-gray-200 shadow-sm rounded-lg p-4">
+              <ResumePreview
+                data={resumeData}
+                template={resumeData.template}
+                accentColor={resumeData.accent_color}
+              />
+            </div>
+          </div>
         </div>
       </div>
     </div>

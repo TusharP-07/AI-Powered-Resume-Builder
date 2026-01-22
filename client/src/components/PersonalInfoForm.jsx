@@ -1,5 +1,14 @@
-import { User } from "lucide-react";
+import {
+  BriefcaseBusiness,
+  Globe,
+  Linkedin,
+  Mail,
+  MapPin,
+  Phone,
+  User,
+} from "lucide-react";
 import React from "react";
+import dummyImage from "../assets/dummy_profile.png";
 
 const PersonalInfoForm = ({
   data,
@@ -11,48 +20,54 @@ const PersonalInfoForm = ({
     onChange({ ...data, [field]: value });
   };
 
+  const fields = [
+    { key: "full_name", label: "Full Name", icon: User, type: "text", required: true },
+    { key: "email", label: "Email Address", icon: Mail, type: "email", required: true },
+    { key: "phone", label: "Phone Number", icon: Phone, type: "tel" },
+    { key: "location", label: "Location", icon: MapPin, type: "text" },
+    { key: "profession", label: "Profession", icon: BriefcaseBusiness, type: "text" },
+    { key: "linkedin", label: "LinkedIn Profile", icon: Linkedin, type: "url" },
+    { key: "website", label: "Personal Website", icon: Globe, type: "url" },
+  ];
+
   const imagePreview =
     data?.image &&
-    (typeof data.image === "string"
-      ? data.image
-      : URL.createObjectURL(data.image));
+    (typeof data.image === "string" ? data.image : URL.createObjectURL(data.image));
 
   return (
-    <div className="flex items-center gap-6">
-      {/* Avatar Upload */}
-      <label className="cursor-pointer">
-        {imagePreview ? (
-          <img
-            src={imagePreview}
-            alt="User"
-            className="w-16 h-16 rounded-full object-cover ring-2 ring-slate-300 hover:opacity-80 transition"
+    <div className="space-y-6">
+      {/* ✅ Top Row (Avatar + Toggle) */}
+      <div className="flex items-center gap-6">
+        {/* Avatar Upload */}
+        <label className="cursor-pointer">
+          {imagePreview ? (
+            <img
+              src={imagePreview}
+              alt="User"
+              className="w-16 h-16 rounded-full object-cover ring-2 ring-slate-300 hover:opacity-80 transition"
+            />
+          ) : (
+            <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center ring-2 ring-slate-300">
+              <User className="size-7 text-slate-500" />
+            </div>
+          )}
+
+          <input
+            type="file"
+            accept="image/jpeg, image/png, image/webp"
+            className="hidden"
+            onChange={(e) => {
+              if (e.target.files?.[0]) {
+                handleChange("image", e.target.files[0]);
+              }
+            }}
           />
-        ) : (
-          <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center ring-2 ring-slate-300">
-            <User className="size-7 text-slate-500" />
-          </div>
-        )}
+        </label>
 
-        <input
-          type="file"
-          accept="image/jpeg, image/png, image/webp"
-          className="hidden"
-          onChange={(e) => {
-            if (e.target.files?.[0]) {
-              handleChange("image", e.target.files[0]);
-            }
-          }}
-        />
-      </label>
-
-      {/* Right Content */}
-      <div className="flex flex-col gap-2">
-        <p className="text-sm text-slate-600 font-medium">Upload profile image</p>
-
-        {/* Background toggle only if image exists */}
+        {/* Remove Background Toggle */}
         {data?.image && (
-          <div className="flex items-center gap-3">
-            <p className="text-sm text-slate-600">Remove background</p>
+          <div className="flex flex-col gap-1">
+            <p className="text-sm font-medium text-slate-700">Remove Background</p>
 
             <button
               type="button"
@@ -69,6 +84,33 @@ const PersonalInfoForm = ({
             </button>
           </div>
         )}
+      </div>
+
+      {/* ✅ Input Fields (Vertical Stack) */}
+      <div className="space-y-5">
+        {fields.map((f) => {
+          const Icon = f.icon;
+
+          return (
+            <div key={f.key} className="space-y-2">
+              <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                <Icon className="size-4 text-gray-500" />
+                {f.label}
+                {f.required && <span className="text-red-500">*</span>}
+              </label>
+
+              <input
+                type={f.type}
+                value={data?.[f.key] || ""}
+                onChange={(e) => handleChange(f.key, e.target.value)}
+                placeholder={`Enter your ${f.label.toLowerCase()}`}
+                required={f.required}
+                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm outline-none transition
+                  focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+              />
+            </div>
+          );
+        })}
       </div>
     </div>
   );
